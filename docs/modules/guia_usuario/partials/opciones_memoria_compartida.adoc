@@ -1,0 +1,56 @@
+[cols=3*1, options="header, autowidth"]
+|===
+|
+|GNU
+|Intel Suite
+
+|Compilador de lenguaje C
+|gcc
+|icc
+
+|Compilador de lenguaje C++
+|g++
+|icpc
+
+|Compilador de lenguaje Fortran
+|gfortran
+|ifort
+
+|Threads openmp
+|-fopenmp
+|-openmp
+
+|phreads
+|-pthread
+|-pthread
+
+|Optimización de código
+|-O0 +
+-O1 +
+-O2 +
+-O3 +
+-ffast-math +
+|-O0 +
+-O1 +
+-O2 +
+-O3 +
+-fast +
+
+|Reporte de mensajes de precaución +
+en la compilación
+|-Wall
+|-Wall
+
+|Habilitar AVX
+|-mavx
+|-mavx
+
+|Habilitar AVX2 +
+(solo para nodos tt)
+|
+|-march=core-avx2 +
+ +
+-axCORE-AVX512 +
+-axCORE-AVX2 +
+-axAVX
+|===

@@ -1,0 +1,42 @@
+[cols="5*1", options="header, autowidth"]
+|===
+|
+|Intel Suite
+|OpenMPI
+|HPCX
+|Mvapich2
+
+|C
+|mpiicc
+|mpicc
+|mpicc
+|mpicc
+
+|C++
+|mpiicc
+|mpicxx
+|mpicxx
+|mpicxx
+
+|F90
+|mpiifort
+|mpif90
+|mpif90
+|mpif90
+
+|F77
+|mpiifort
+|mpif77
+|mpif77
+|mpif77
+
+|MPI LAUNCH
+|mpirun +
+mpiexec.hydra
+|mpirun +
+mpiexec
+|mpirun
+mpiexec +
+|mpirun +
+mpiexec.hydra
+|===

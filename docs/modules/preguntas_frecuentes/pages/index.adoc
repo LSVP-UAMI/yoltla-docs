@@ -1,0 +1,118 @@
+= Preguntas frecuentes
+
+[#slurm]
+== SLURM
+
+[#que_es_slurm]
+=== ¿Qué es SLURM?
+Es un sistema de programación de trabajos y administración de clústeres de código abierto, tolerante a fallas y altamente escalable para clústeres de Linux grandes y pequeños. 
+
+
+[#version_slurm]
+=== ¿Qué versión de SLURM está instalada en el clúster?
+La versión 17.11.5.
+
+
+
+[#trabajos]
+== Trabajos
+
+[#trabajo]
+=== ¿Qué es un trabajo?
+SLURM da el nombre de trabajo (job) a los recursos de cómputo (nodos con sus correspondientes cores) asignados a un usuario por un determinado periodo de tiempo.
+
+
+[#enviar_trabajo]
+=== ¿Cómo envío un trabajo?
+Utilice el comando `sbatch` seguido del nombre de su script:
+[source,cli]
+----
+sbatch <nombre del script>
+----
+Para obtener más información, consulte la sección xref:guia_usuario:tutoriales#enviar_trabajo[Enviar un trabajo].
+
+
+[#consultar_trabajo]
+=== ¿Cómo consulto un trabajo?
+Utilice el comando `squeue` seguido de la opción `-j` y el ID de su trabajo:
+[source,cli]
+----
+squeue -j <ID del trabajo>
+----
+Para obtener más información, consulte la sección xref:guia_usuario:tutoriales#consultar_trabajo[Consultar un trabajo].
+
+
+[#cancelar_trabajo]
+=== ¿Cómo cancelo un trabajo?
+Utilice el comando `scancel` seguido del ID de su trabajo:
+[source,cli]
+----
+scancel <ID del trabajo>
+----
+Para obtener más información, consulte la sección xref:guia_usuario:tutoriales#cancelar_trabajo[Cancelar un trabajo].
+
+
+[#job_state_codes]
+=== ¿Qué son los Job State Codes?
+Son códigos que identifican el estado de un trabajo. +
+Para obtener más información, consulte la sección xref:guia_usuario:anexos#job_state_codes[Job State Codes].
+
+
+[#job_reason_codes]
+=== ¿Qué son los Job Reason Codes?
+Son códigos que identifican la razón por la que un trabajo está esperando su ejecución. +
+Para obtener más información, consulte la sección xref:guia_usuario:anexos#job_reason_codes[Job Reason Codes].
+
+
+
+[#aplicaciones]
+== Aplicaciones
+
+[#módulo]
+=== ¿Qué es un módulo?
+Es un archivo que contiene la información necesaria para configurar el shell para una aplicación. 
+
+
+[#listar_modulos_cluster]
+=== ¿Cómo listo los módulos del clúster?
+Utilice el comando `module` seguido del subcomando `avail`:
+----
+module avail
+----
+Para obtener más información, consulte la sección xref:guia_usuario:tutoriales#listar_modulos_cluster[Listar los módulos del clúster].
+
+
+[#cargar_modulo]
+=== ¿Cómo cargo un módulo?
+Utilice el comando `module` seguido del subcomando `load` y el nombre del módulo a cargar:
+----
+module load <módulo>
+----
+Para obtener más información, consulte la sección xref:guia_usuario:tutoriales#cargar_modulo[Cargar un módulo].
+
+
+[#listar_modulos_cargados]
+=== ¿Cómo listo todos los módulos cargados?
+Utilice el comando `module` seguido del subcomando `list`:
+----
+module list
+----
+Para obtener más información, consulte la sección xref:guia_usuario:tutoriales#listar_modulos_cargados[Listar los módulos cargados].
+
+
+[#descargar_modulo]
+=== ¿Cómo descargo un módulo?
+Utilice el comando `module` seguido del subcomando `unload` y el nombre del módulo a descargar:
+----
+module unload <módulo>
+----
+Para obtener más información, consulte la sección xref:guia_usuario:tutoriales#descargar_modulo[Descargar un módulo].
+
+
+[#descargar_modulos_cargados]
+=== ¿Cómo descargo todos los módulos cargados?
+Utilice el comando `module` seguido del subcomando `purge`:
+----
+module purge
+----
+Para obtener más información, consulte la sección xref:guia_usuario:tutoriales#descargar_modulos_cargados[Descargar todos los módulos cargados].

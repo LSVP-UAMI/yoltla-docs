@@ -1,0 +1,433 @@
+= LAMMPS
+
+[#descripcion]
+== Descripción
+Large-scale Atomic/Molecular Massively Parallel Simulator (LAMMPS) es un programa de dinámica molecular que modela conjuntos de partículas en estado líquido, sólido o gaseoso. Puede modelar sistemas atómicos, poliméricos, biológicos, de estado sólido (metales, cerámicas, óxidos), granulares, de grano grueso o macroscópicos utilizando una variedad de potenciales interatómicos (campos de fuerza) y condiciones de contorno. Puede modelar sistemas 2d o 3d con solo unas pocas partículas hasta millones o miles de millones. 
+
+LAMMPS fue diseñado para funcionar de manera eficiente en equipos paralelos. Utiliza la interfaz de paso de mensajes (MPI) para la comunicación en paralelo.
+
+
+
+[#modulos]
+== Módulos
+En el clúster se encuentran disponibles los siguientes módulos para el uso de la aplicación LAMMPS:
+
+* intel/16.3.210/impi/impi-5.1.3/lammps/11092016 
+* lammps/2018/05/lmp_mpi-gpu
+* lammps/2018/12/lmp-cpu
+* lammps/2019/08/lmp-gpu 
+
+
+[#diferencias_versiones]
+=== Diferencias entre versiones
+
+[cols="40%,10%,20%,20%,10%", options="header"]
+|===
+|Módulo
+|GPU
+|Memoria compartida
+|Memoria distribuida
+|Man pages
+
+|intel/16.3.210/impi/impi-5.1.3/lammps/11092016
+|No
+|Sí
+|Sí
+|No
+
+|lammps/2018/05/lmp_mpi-gpu
+|Sí
+|No
+|Sí
+|No
+
+|lammps/2018/12/lmp-cpu
+|No
+|Sí
+|Sí
+|No
+
+|lammps/2019/08/lmp-gpu
+|Sí
+|No
+|Sí
+|No
+|===
+
+
+[#cargar_aplicación]
+=== Cargar aplicación
+Para cargar la aplicación LAMMPS, utilice el siguiente comando:
+
+----
+module load <módulo>
+----
+
+Por ejemplo, para cargar el modulo _lammps/2019/08/lmp-gpu_, ejecute el comando:
+----
+module load lammps/2019/08/lmp-gpu 
+----
+
+
+
+[#archivo_entrada]
+== Archivo de entrada
+Un script de entrada de LAMMPS (archivo de texto) normalmente consta de 4 partes:
+
+. Inicialización
+. Definición del sistema
+. Configuración de la simulación
+. Ejecución de la simulación
+
+Las 2 últimas partes se pueden repetir tantas veces como se desee. Es decir, ejecutar la simulación, cambiar algunos ajustes, ejecutar algunos más, etc. Cada una de las 4 partes se describen ahora con más detalle. Recuerde que la mayoría de los comandos solo deben usarse si se desea utilizar un valor no predeterminado.
+
+
+[#inicializacion]
+=== 1. Inicialización
+Establece los parámetros que deben definirse antes de que los átomos se creen o se lean desde un archivo. Los comandos más relevantes son: 
+
+[cols="15%,85%", options="header"]
+|===
+|Comando
+|Descripción
+
+|`units`
+|Este comando establece el estilo de las unidades utilizadas para una simulación. Determina las unidades de todas las cantidades  especificadas en el script de entrada y el archivo de datos, así como las  cantidades mostradas pantalla, y el archivo de registro.
+Normalmente, este comando se utiliza al principio de un script de entrada.
+
+|`dimension`
+|Establece la dimensiones de la simulación. Por defecto, LAMMPS ejecuta simulaciones en 3D. Para ejecutar una simulación 2d, este comando debe usarse antes de configurar una caja de simulación a través de los comandos `create_box` o `read_data`.
+
+|`newton`
+|Este comando activa o desactiva la tercera ley de Newton para interacciones vinculadas y por pares. Para la mayoría de los problemas, activar la tercera ley de Newton significa un modesto ahorro en cálculo.
+
+|`processors`
+|Especifica cómo se asignan los procesadores.
+
+|boundary
+|Establece el estilo de los límites para el cuadro de simulación global en cada dimensión. Una sola letra asigna el mismo estilo tanto a la cara inferior como a la superior del cuadro. Dos letras asignan el primer estilo a la cara inferior y el segundo estilo a la cara superior. El tamaño inicial del cuadro de simulación lo establecen los comandos `read_data`, `read_restart` o `create_box`.
+
+|atom_style
+|Define qué estilo de átomos usar en una simulación. Esto determina qué atributos están asociados con los átomos. Este comando debe usarse antes de configurar una simulación mediante un comando `read_data`, `read_restart` o `create_box`.
+
+|atom_modify
+|Modifica ciertos atributos de los átomos definidos y almacenados dentro de LAMMPS, extras de lo que especifica el comando `atom_style`.
+|===
+
+Si los parámetros de campos de fuerza aparecen en los archivos que se van a leer, estos comandos indican a LAMMPS el tipo de campos de fuerza que se esta utilizando: 
+
+[cols="18%,82%", options="header"]
+|===
+|Comando
+|Descripción
+
+|`pair_style`
+|Establece las fórmulas que utiliza LAMMPS para calcular interacciones por pares. 
+
+|`bond_style`
+|Establece la(s) fórmula(s) que utiliza LAMMPS para calcular las interacciones de enlace entre pares de átomos. En LAMMPS, un enlace difiere de una interacción por pares, que se establece mediante el comando `pair_style`.
+
+|`angle_style`
+|Establece la(s) fórmula(s) que utiliza LAMMPS para calcular las interacciones de los ángulos entre los tripletes de átomos, que permanecen vigentes durante la simulación.
+
+|`dihedral_style`
+|Establece la(s) fórmula(s) que utiliza LAMMPS para calcular las interacciones diédricas entre los cuatrillizos de átomos, que permanecen vigentes durante la simulación.
+
+|`improper_style`
+|Establece la(s) fórmula(s) que utiliza LAMMPS para calcular interacciones impropias entre cuatrillizos de átomos, que permanecen vigentes durante la simulación.
+|===
+
+
+[#definicion_sistema]
+=== 2. Definición del sistema
+Hay 3 formas de definir la celda de simulación y reservar espacio para la información del campo de fuerza y llenarlo con átomos en LAMMPS. 
+	
+. Leerlos  desde un archivo de datos.
+. Un archivo de reinicio mediante los comandos `read_data` o `read_restart`, respectivamente. Estos archivos también pueden contener información de topología molecular. 
+. Crear una celda de simulación y llenarla con átomos en una red (sin topología molecular), usando estos comandos: 
++
+[cols="15%,85%", options="header"]
+|===
+|Comando
+|Descripción
+
+|`lattice`
+| -
+
+|`region`
+|Este comando define una región geométrica del espacio.
+
+|`create_box`
+|Este comando crea un cuadro de simulación basado en la región especificada. Por lo tanto, primero se debe usar un comando de región para definir un dominio geométrico.
+
+|`create_atoms`
+| Este comando crea átomos (o moléculas) en una red, o un solo átomo (o molécula), o una colección aleatoria de átomos (o moléculas), como una alternativa a la lectura en sus coordenadas explícitamente a través de un comando `read_data` o `read_restart`.
+
+|`read_dump`
+|Lee la información del átomo de un archivo "dump" para sobrescribir las coordenadas del átomo actual y, opcionalmente, las velocidades del átomo y los indicadores de imagen y las dimensiones del cuadro de simulación.
+|===
+
+El conjunto completo de átomos se puede duplicar para hacer una simulación más grande usando el comando `replicate`.
+
+
+[#configuracion_simulacion]
+=== 3. Configuración de la simulación
+Una vez que se definen los átomos y la topología molecular, se pueden especificar una variedad de configuraciones: coeficientes de campo de fuerza, parámetros de simulación, opciones de salida y más.
+
+Los coeficientes de campo de fuerza son establecidos por estos comandos:
+
+[cols="18%,82%", options="header"]
+|===
+|Comando
+|Descripción
+
+|`pair_coeff`
+|Especifica los coeficientes de campo de fuerza por pares para uno o más pares de tipos de átomos.
+
+|`bond_coeff`
+|Especifica los coeficientes del campo de fuerza de enlace para uno o más tipos de enlace.
+
+|`angle_coeff`
+|Especifica los coeficientes del campo de fuerza del ángulo para uno o más tipos de ángulos.
+
+|`dihedral_coeff`
+|Especifica los coeficientes del campo de fuerza diedro para uno o más tipos diedros.
+
+|`improper_coeff`
+|Especifica los coeficientes de campo de fuerza incorrectos para uno o más tipos incorrectos.
+
+|`kspace_style`
+|Define un solucionador de largo alcance para que LAMMPS utilice cada paso de tiempo para calcular interacciones Coulombic de largo alcance
+
+|`dielectric`
+|Establece la constante dieléctrica para las interacciones de Coulombic (por pares y de largo alcance) en este valor.
+
+|`special_bonds`
+|Establece coeficientes de ponderación para las contribuciones de energía y fuerza por pares entre pares de átomos que también están unidos permanentemente entre sí, ya sea directamente o mediante uno o dos enlaces intermedios.
+|===
+
+Estos comandos establecen varios parámetros de simulación:
+
+[cols="18%,82%", options="header"]
+|===
+|Comando
+|Descripción
+
+|`neighbor`
+|Este comando establece parámetros que afectan la construcción de listas de vecinos por pares.
+
+|`neigh_modify`
+|Este comando establece parámetros que afectan la construcción y uso de listas de vecinos por pares. Dependiendo de qué interacciones de pares y otros comandos se definan, una simulación puede requerir una o más listas de vecinos.
+
+|`group`
+|Identifica una colección de átomos como perteneciente a un grupo. El ID de grupo se puede usar en otros comandos como `fix`, `compute`, `dump`, o `velocity` para actuar sobre esos átomos juntos.
+
+|`timestep`
+|Establece el tamaño del paso de tiempo para simulaciones posteriores de dinámica molecular. Consulte el comando de unidades para conocer las unidades de tiempo asociadas con cada opción de unidades que admite LAMMPS.
+
+|`reset_timestep`
+|-
+
+|`run_style`
+|-
+
+|`min_style`
+|-
+
+|`min_modify`
+|-
+|===
+
+Las correcciones imponen una variedad de condiciones de contorno, integración de tiempo y opciones de diagnóstico. El comando `fix` viene en muchas opciones.
+
+Se pueden especificar varios cálculos para su ejecución durante una simulación utilizando los comandos:
+
+[cols="15%,85%", options="header"]
+|===
+|Comando
+|Descripción
+
+|`compute`
+|Define un cálculo que se realizará en un grupo de átomos.
+
+|`compute_modify`
+|Modifica uno o más parámetros de un cálculo previamente definido.
+
+|`variable`
+|Este comando asigna una o más cadenas a un nombre de variable para su evaluación más adelante en el script de entrada o durante una simulación.
+|===
+
+Las opciones de salida se establecen mediante los comandos:
+
+[cols="15%,85%", options="header"]
+|===
+|Comando
+|Descripción
+
+|`thermo`
+|Calcula e imprime información termodinámica (por ejemplo, temperatura, energía, presión) en intervalos de tiempo que son múltiplos de N y al principio y al final de una simulación. 
+
+|`dump`
+|-
+
+|`restart`
+|Escribe un archivo de reinicio binario con el estado actual de la simulación cada tantos pasos de tiempo, en uno o en ambos modos, a medida que avanza la ejecución. Un valor de 0 significa que no escribe ningún archivo de reinicio.
+|===
+
+
+[#ejecucion_simulacion]
+=== 4. Ejecución de la simulación
+Se ejecuta una simulación de dinámica molecular utilizando el comando `run`. La minimización de energía (estática molecular) se realiza mediante el comando `minimize`. Se puede ejecutar una simulación de templado paralelo (réplica-intercambio) utilizando el comando `temper`.
+
+
+[#ejecucion]
+== Ejecución
+
+[#ejecucion_cpu]
+=== CPU
+
+----
+mpiexec.hydra -bootstrap slurm -np 20 lammps -in lammps.input
+----
+
+[cols="1,1", options="autowidth"]
+|===
+|`mpiexec.hydra`
+|Se ejecuta LAMMPS en paralelo a través de `mpiexec.hydra`, debe conocer el comando que controla cómo se asignan las tareas MPI, así como las opciones de `mpiexec.hydra` que controlan cómo se asignan las tareas MPI a los núcleos físicos de los nodos de la máquina en la que está ejecutando. Esta configuración puede mejorar el rendimiento. Es recomendable vincular tareas MPI (procesos) a la cantidad de núcleos físicos.
+
+|`-bootstrap slurm`
+|Opción necesario para el cluster Yoltla para ejecutar en varios Cpu's y Nodos. 
+		
+|`-np`
+|Opción para escoger la cantidad de procesos a ejecutar.
+	
+|`-in`
+|Opción para escoger el achivo de entrada (input) a ejecutar. Se puede usar tambien el operador de redirección `<` para escoger el achivo, pero no siempre funcionará cuando se ejecute en paralelo con `mpirun` o `mpiexec.hydra`; para esos sistemas se requiere el formato `-in`.
+|===
+
+[#ejecucion_gpu]
+=== GPU
+
+----
+mpiexec.hydra -bootstrap slurm -np 20 lmp_mpi-gpu -sf gpu -pk gpu 1 -in lammps.input
+----
+
+[cols="1,1", options="autowidth"]
+|===
+|mpiexec.hydra
+|Se ejecuta LAMMPS en paralelo a través de `mpiexec.hydra`, debe conocer el comando que controla cómo se asignan las tareas MPI, así como las opciones de `mpiexec.hydra` que controlan cómo se asignan las tareas MPI a los núcleos físicos de los nodos de la máquina en la que está ejecutando. Esta configuración puede mejorar el rendimiento.	Es recomendable vincular tareas MPI (procesos) a la cantidad de núcleos físicos.
+
+|`-bootstrap slurm`
+|Opción necesario para el cluster Yoltla para ejecutar en varios Cpu's y Nodos.
+		
+|`-np` 
+|Opción para escoger la cantidad de procesos a ejecutar. 
+		
+|`-in` 
+|Opción para escoger el achivo de entrada (input) a ejecutar. Se puede usar tambien el operador de redirección `<` para escoger el achivo, pero no siempre funcionará cuando se ejecute en paralelo con `mpirun` o `mpiexec.hydra`; para esos sistemas se requiere el formato `-in`.
+		
+|`-sf gpu`
+|El comando "-sf gpu", detecta la cantidad de gpu en el equipo disponible.
+
+|`-pk gpu`
+|El comando `-pk` invoca configuraciones específicas del paquete para los distintos paquetes de acelerador disponibles en LAMMPS. El uso del comando `-pk gpu` permite establecer explícitamente el número de GPU  a utilizar y opciones adicionales.
+|===
+
+Mas información del comando `pk` https://docs.lammps.org/package.html[aquí].
+
+
+
+[#scripts_ejemplo]
+== Scripts de ejemplo
+
+Puede encontrar scripts de ejemplo de la aplicación LAMMPS en el siguiente directorio:
+----
+/LUSTRE/scripts_ejemplo/Lammps
+----
+
+
+
+[#errores_frecuentes]
+== Errores frecuentes
+LAMMPS detecta muchos errores del script de entrada y se imprime un mensaje de ERROR o ADVERTENCIA.
+A continuación se listan los errores más comunes: 
+
+[cols="35%,65%", options="header"]
+|===
+|Error
+|Descripción
+
+|`1-3 bond count is inconsistent`
+|Se detectó una inconsistencia al calcular el número de 1-3 vecinos para cada átomo. Esto probablemente significa que algo anda mal con las topologías de enlace que ha definido.
+
+|`Accelerator sharing is not currently supported on system`
+|Varios procesos MPI no pueden compartir el acelerador en su sistema. Para las GPU NVIDIA, consulte el comando `nvidia-smi` para cambiar esta configuración.
+
+|`All angle coeffs are not set`
+|Todos los coeficientes de ángulo deben establecerse en el archivo de datos o mediante el comando `angle_coeff` antes de ejecutar una simulación.
+
+|`All bond coeffs are not set`
+|Todos los coeficientes de enlace deben establecerse en el archivo de datos o mediante el comando `bond_coeff` antes de ejecutar una simulación.
+
+|`Angle atom missing in delete_bonds`
+|El comando `delete_bonds` no puede encontrar uno o más átomos en un ángulo particular en un procesador en particular. El corte por pares es demasiado corto o los átomos están demasiado separados para formar un ángulo válido.
+
+|`Angle extent > half of periodic box length`
+|Este error fue detectado por la configuración `neigh_modify check yes`. Los átomos de los ángulos están tan separados que es ambiguo cómo debería definirse.
+
+|`Angle_coeff command before angle_style is defined`
+|Los coeficientes no se pueden establecer en el archivo de datos o mediante el comando `angle_coeff` hasta que se haya asignado un `angle_style`.
+
+|`Angle_coeff command before simulation box is defined`
+|El comando `angle_coeff` no se puede utilizar antes de un comando `read_data`, `read_restart` o `create_box`.
+
+|`Atom count is inconsistent, cannot write data file`
+|La suma de átomos en los procesadores no es igual al número global de átomos. Probablemente se hayan perdido algunos átomos.
+
+|`Atom in too many rigid bodies - boost MAXBODY`
+|Fix poems tiene un parámetro `MAXBODY` (en fix_poems.cpp) que determina el número máximo de cuerpos rígidos a los que puede pertenecer un solo átomo (es decir, una unión multicuerpo). Los cuerpos que ha definido superan este límite.
+|===
+
+
+[#consideraciones_importantes]
+=== Consideraciones importantes
+LAMMPS se ejecuta leyendo los comandos del script de entrada, una línea a la vez.
+
+En muchos casos, el orden de los comandos en un script de entrada no es importante. Sin embargo, se aplican las siguientes reglas:
+
+. LAMMPS no lee todo el script de entrada y luego realiza una simulación con todos los ajustes.
+Por el contrario, la secuencia de comandos de entrada se lee una línea a la vez y cada comando entra
+en vigor cuando se lee. Por lo tanto, esta secuencia de comandos:
++
+----
+timestep 0.5
+run      100
+run      100
+----
++
+hace algo diferente a esta secuencia:
++
+----
+run      100
+timestep 0.5
+run      100
+----
++
+En el primer caso, el intervalo de tiempo especificado (0,5 fs) se utiliza para dos simulaciones de 100 intervalos de tiempo cada una. En el segundo caso, se usa el paso de tiempo predeterminado (1.0 fs) para la primera simulación de 100 pasos y se usa un paso de tiempo de 0.5 fs para la segunda
+
+. Algunos comandos solo son válidos cuando siguen otros comandos. Por ejemplo, no puede establecer la temperatura de un grupo de átomos hasta que se hayan definido los átomos y se utilice un comando de grupo para definir qué átomos pertenecen al grupo.
+
+. A veces, el comando B utilizará valores que se pueden establecer con el comando A. Esto significa que el comando A debe preceder al comando B en el script de entrada para que tenga el efecto deseado. Por ejemplo, el comando `read_data` inicializa el sistema configurando la caja de simulación y asignando átomos a los procesadores. Si no se desean valores predeterminados, los procesadores y los comandos de límites deben usarse antes de `read_data` para decirle a LAMMPS cómo asignar procesadores a la caja de simulación.
+
+
+
+[#licencia]
+== Licencia
+LAMMPS es un código fuente abierto disponible gratuitamente, distribuido bajo los términos de la Licencia Pública GNU.
+
+Para obtener más información, consulte la página https://lammps.sandia.gov/doc/Intro_opensource.html[LAMMPS open-source license]
+
+
+[#referencias]
+== Referencias
+* https://lammps.sandia.gov/[Página oficial de LAMMPS]

@@ -1,0 +1,10 @@
+= Aplicaciones
+
+Las aplicaciones en el clúster Yoltla están disponibles mediante la herramienta _Modules_. Esta herramienta permite crear, modificar y agregar valores a las variables de entorno necesarias para el funcionamiento de las aplicaciones instaladas en Yoltla, además facilita la ejecución, compilación y uso de múltiples versiones de aplicaciones.
+
+_Modules_ está disponible para todos los usuarios a través del comando _module_. Por ejemplo, para hacer uso de los compiladores y herramientas de intel, ejecute el comando:
+----
+[pepe@yoltla0 ~]$ module load intel/compilers-2017u4
+----
+
+Para obtener más información acerca de las aplicaciones disponibles en el clúster y su uso, consulte la sección xref:guia_usuario:tutoriales#aplicaciones_cluster[¿Cómo utilizo las aplicaciones del clúster?].

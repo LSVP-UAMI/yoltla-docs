@@ -1,0 +1,9 @@
+name: yoltla_docs
+title: Yoltla Documentación
+version: develop
+nav:
+- modules/ROOT/nav.adoc
+- modules/guia_usuario/nav.adoc
+- modules/preguntas_frecuentes/nav.adoc
+- modules/aplicaciones/nav.adoc
+- modules/referencias/nav.adoc

@@ -1,0 +1,351 @@
+= Anexos
+:table-caption: Tabla 
+:figure-caption: Imagen 
+
+[#recursos_computo]
+== Recursos de Cómputo
+
+Existen 27 particiones para solicitar recursos en el cluster, el nombre de cada una de estas particiones hace referencia a los recursos máximos que se pueden solicitar. Por ejemplo, la partición _q1d-80p_ tiene como tiempo de ejecución máximo 1 día utilizando hasta 80 CPUs.
+
+include::partial$particiones_yoltla.adoc[]
+
+[NOTE,caption=NOTA]
+==== 
+La información que se presenta puede ser diferente a la disponible en el clúster, por favor ejecute el comando:
+[source,cli]
+----
+sjstat -c
+----
+en los nodos de acceso para ver la lista completa/actualizada de los nodos disponibles.
+====
+
+.Nodos de cómputo en el cluster Yoltla
+[cols="^.^1,^.^1,^.^1", options="header, autowidth"]
+|===
+|Tipo de nodo
+|Número de CPUs
+|Memoria RAM
+
+|Cómputo CPU - nc
+|20
+|64 GB
+
+|Cómputo GPU - nc
+|20
+|64 GB
+
+|Cómputo VGPU - nc
+|36
+|128 GB
+
+|Cómputo VGPU - nc
+|36
+|256 GB
+
+|Cómputo CPU - tt
+|20
+|128 GB
+
+|Cómputo CPU - tt
+|32 
+|256 GB
+|===
+
+
+
+[#directivas_slurm]
+== Directivas de SLURM
+
+[#nombre_trabajo]
+=== Nombre del trabajo
+
+----
+--job-name=trabajo
+----
+
+Establece el nombre del trabajo. Si no se establece un nombre para el trabajo, el nombre por default será el nombre del script.
+
+
+[#salida_estandar]
+=== Salida estándar
+
+----
+--output=salida
+----
+
+Establece el nombre del archivo en el que se escribiran los mensajes del flujo de la "salida estándar". Si no se establece un nombre para este archivo, el nombre por default será _slurm-<ID del trabajo>.out_.
+
+Por ejemplo:
+----
+#SBATCH --output=salida-%j.out
+----
+indica que se debe crear el archivo _salida-<ID del trabajo>.out_ para guardar los mensajes del flujo de la "salida estándar".
+
+
+[#error_estandar]
+=== Error estándar
+
+----
+--error=error
+----
+
+Establece el nombre del archivo en el que se escribiran los mensajes del flujo de "error estándar". Si no se establece un nombre para este archivo, el nombre por default será _slurm-<ID del trabajo>.out_.
+
+Por ejemplo:
+----
+#SBATCH --error=error-%j.out
+----
+indica que se debe crear el archivo _error-<ID del trabajo>.out_ para guardar los mensajes del flujo del "error estándar".
+
+
+[#nombre_particion]
+=== Nombre de la partición
+
+----
+--partition=partición
+----
+
+Estable el nombre de la partición donde se formará el trabajo para ser atendido (ver sección xref:anexos#recursos_computo[Recursos de cómputo]). Si no se establece una partición, el sistema formará el trabajo en la partición default _q1h-20p_.
+
+
+[#tiempo_ejecucion]
+=== Tiempo máximo de ejecución
+
+----
+--time=dd-hh:mm:ss
+----
+
+Establece el tiempo máximo de uso de los nodos de cómputo, el trabajo puede terminar de ejecutarse en menos tiempo (caso deseado) o no terminar en el tiempo solicitado, en este último caso el programa es notificado mediante una señal SIGTERM seguida por la señal SIGKILL.
+
+En caso de omitir esta directiva, el tiempo máximo se establecerá según la partición. En general se recomienda establecer el tiempo, si es menor que el máximo permitido por la partición, ya que permitirá al algoritmo “backfill” seleccionar el trabajo para su ejecución antes que otros trabajos que le preceden.
+
+.Formatos válidos de la directiva time
+[cols="1,1", options="header, autowidth"]
+|===
+|Tiempo
+|Formato
+
+|minutos
+|`--time=35`
+
+|minutos:segundos
+|`--time=35:20`
+
+|horas:minutos:segundos
+|`--time=1:35:20`
+
+|días-horas
+|`--time=1-0` +
+`--time=0-1`
+
+|días-horas:minutos 
+|`--time=4-1:35`
+
+|días-horas:minutos:segundos
+|`--time=4-1:35:20`
+|===
+
+
+[#numero_nodos]
+=== Número de nodos
+
+----
+--nodes=#
+----
+
+Estable la cantidad de nodos de cómputo a utilizar para la ejecución del trabajo. Es necesario indicar el número de nodos dependiendo de la partición solicitada ya que de lo contrario el trabajo será rechazado.
+
+
+[#numero_tareas_nodos]
+=== Número de tareas por nodo
+
+----
+--ntasks-per-node=#
+--tasks-per-node=#
+----
+
+Estas dos directivas son equivalentes y establecen la cantidad tareas a ejecutar en los nodos asignados. Cada una de las tareas será atendida por un core diferente.
+
+En el entorno de SLURM una tarea es una copia del programa que se ejecutará en el nodo o nodos asignados.
+
+
+[#numero_cpus_tarea]
+=== Número de CPUs por tarea
+
+----
+--cpus-per-task=#
+----
+
+Establece la cantidad de CPUs que utilizará una tarea en cada uno de los nodos asignados. Esta directiva es útil para ejecuciones de programas de memoria compartida “OPENMP” ya que solamente se ejecuta una copia (tarea) del programa y posteriormente se crean hilos necesarios para atender las partes paralelas.
+
+La cantidad de hilos que se crearán durante la ejecución de un programa de memoria compartida “OPENMP” es controlada en el archivo de entrada de la tarea o por medio de la variable de ambiente OMP_NUM_THREADS (ver sección xref:anexos#ejemplos_scripts[Ejemplos de scripts]).
+
+
+[#correo_electronico]
+=== Correo eléctronico
+
+----
+--mail-user=email
+----
+
+Establece el correo eléctronico en el que el usuario recibira notificaciones de los cambios de estado de un trabajo.
+
+
+[#notificaciones]
+=== Tipo de notificaciones
+
+----
+--mail-type=eventos
+----
+
+Establece los eventos que se notificarán por correo electrónico.
+
+Por ejemplo:
+----
+#SBATCH --mail-type=BEGIN,END,FAIL
+----
+indica que se debe enviar una notificación cuando el trabajo inicie, termine o falle.
+
+.Valores válidos en la directiva mail-type
+[cols="1,1", options="header, autowidth"]
+|===
+|Valor
+|Descripción
+
+|NONE
+|No recibir ninguna notificación.
+
+|BEGIN
+|Notificar el inicio del trabajo.
+
+|END
+|Notificar el fin del trabajo.
+
+|FAIL
+|Notificar si el trabajo falla.
+
+|INVALID_DEPEND
+|Notificar si el trabajo tiene una dependencia inválida.
+
+|TIME_LIMIT
+|Notificar si el trabajo alcanzo su límite de tiempo.
+
+|ARRAY_TASKS
+|Recibir una notificación por cada trabajo en el array.
+
+|ALL
+|Recibir todas las notificaciones.
+|===
+
+
+
+[#slurm_environment_variables]
+== SLURM Environment Variables
+SLURM cuenta con una serie de variables de entorno que pueden ser utilizadas dentro de un script. A continuación se listan las variables más comunes:
+
+include::partial$slurm_environment_variables.adoc[]
+
+Para obtener la lista completa de variables  y su descripción, consulte la sección https://slurm.schedmd.com/sbatch.html#lbAK[OUTPUT ENVIRONMENT VARIABLES] en la página https://slurm.schedmd.com/sbatch.html[sbatch] de la documentación oficial de SLURM.
+
+
+
+[#job_state_codes]
+== Job State Codes
+Los trabajos suelen pasar por varios estados en el curso de su ejecución, y cada uno de estos estados se identifica con un código. A continuación se listan los códigos más comunes:
+
+include::partial$job_state_codes.adoc[]
+
+Para obtener la lista completa de códigos  y su descripción, consulte la sección https://slurm.schedmd.com/squeue.html#lbAG[JOB STATE CODES] en la página https://slurm.schedmd.com/squeue.html[squeue] de la documentación oficial de SLURM.
+
+
+
+[#job_reason_codes]
+== Job Reason Codes
+Estos códigos identifican la razón por la que un trabajo está esperando su ejecución. Un trabajo puede estar esperando por más de un motivo, en cuyo caso solo se muestra uno de esos motivos. A continuación se listan los códigos más comunes:
+
+include::partial$job_reason_codes.adoc[]
+
+Para obtener la lista completa de códigos y su descripción, consulte la sección https://slurm.schedmd.com/squeue.html#lbAF[JOB REASON CODES] en la página https://slurm.schedmd.com/squeue.html[squeue] de la documentación oficial de SLURM.
+
+
+
+[#job_accounting_fields]
+== Job Accounting Fields
+
+include::partial$job_accounting_fields.adoc[]
+
+Para obtener la lista completa de campos y su descripción, consulte la sección https://slurm.schedmd.com/sacct.html#lbAF[Job Accounting Fields] en la página https://slurm.schedmd.com/sacct.html[sacct] de la documentación oficial de SLURM.
+
+
+
+[#compiladores_memoria_distribuida]
+== Compiladores de memoria distribuida
+
+include::partial$compiladores_memoria_distribuida.adoc[]
+
+
+
+[#opciones_memoria_compartida]
+== Opciones para compilar en memoria compartida
+
+include::partial$opciones_memoria_compartida.adoc[]
+
+
+[NOTE, caption=NOTA]
+====
+Si utiliza las opciones -march y -ax, el compilador no generará instrucciones específicas de Intel. 
+Esto permite generar un solo archivo que podrá ejecutarse en cualquier tipo de procesador, con la optimización adecuada que se determinará en tiempo de ejecución. 
+====
+
+[WARNING,caption=IMPORTANTE]
+====
+Tenga cuidado al utilizar la opción -fast, ya que establece, entre otras opciones, la opción -xHost automáticamente durante la compilación. La opción -xHost le dice al compilador que genere instrucciones específicas para el procesador anfitrión de compilación.
+====
+
+
+
+[#scripts_ejemplo]
+== Scripts de ejemplo
+
+[#ejemplo_tareas seriales]
+=== Tareas seriales
+
+Trabajo con 20 tareas seriales.
+
+[source,slurm]
+----
+include::example$tareas_seriales.slrm[]
+----
+
+
+[#ejemplo_openMP]
+=== OpenMP
+
+Trabajo con 1 tarea utilizando 20 CPUs.
+
+[source,slurm]
+----
+include::example$openmp.slrm[]
+----
+
+
+[#ejemplo_mpi]
+=== MPI
+
+Trabajo con 2 nodos y 32 tareas por nodo.
+
+[source,slurm]
+----
+include::example$mpi.slrm[]
+----
+
+
+[#ejemplo_gpus]
+=== GPUS
+
+Trabajo con 1 nodo utilizando GPUS.
+
+[source,slurm]
+----
+include::example$gpus.slrm[]
+----
