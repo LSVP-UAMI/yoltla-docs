@@ -4,7 +4,9 @@
 
 [#acceso_cluster]
 == Acceso al clúster
-El acceso a los recursos de cómputo del clúster Yoltla es remoto y se realiza por medio de 2 servidores, que en lo posterior llamaremos nodos de acceso. Para conectarse a los nodos de acceso se requiere de un shell seguro (secure shell / SSH).
+El acceso a los recursos de cómputo del clúster Yoltla es remoto y se realiza 
+por medio de 2 servidores llamados nodos de acceso. Para conectarse a los 
+nodos de acceso se requiere de un shell seguro (secure shell / SSH).
 
 [cols="^.^1,^.^1", options="header, autowidth"]
 .Nodos de acceso
@@ -24,6 +26,8 @@ El acceso a los recursos de cómputo del clúster Yoltla es remoto y se realiza 
 La primera conexión debe realizarse al nodo de acceso yoltla0.
 ====
 
+A continuación se detallan formas de realizar esta conexión desde
+Linux, Mac OS X y Windows.
 
 [#ssh_linux_os]
 === SSH GNU/Linux OS X
@@ -94,7 +98,8 @@ Warning: Permanently added '148.206.50.61' (RSA) to the list of known hosts.
 [#ssh_windows]
 === SSH Windows
 Para el sistema operativo Windows existen varias alternativas comerciales y libres de clientes SSH. +
-Los siguientes 2 clientes son gratuitos y sabemos funcionan bien para conexiones hacia los nodos de acceso desde el sistema operativo Windows:
+Los siguientes dos clientes son gratuitos y sabemos que funcionan bien para realizar
+conexiones hacia los nodos de acceso desde el sistema operativo Windows:
 
 [square]
 * https://portableapps.com/apps/internet/putty_portable[PuTTY]
@@ -184,26 +189,6 @@ Este mensaje es para indicarle que el servidor al que se desea conectar, necesit
 
 
 [#ssh_windows_10]
-=== SSH Windows 10
-En el sistema operativo _Windows 10_, usted puede conectarse al clúster utilizando la interfaz de línea de comandos _Windows PowerShell_.
-
-Desde la ventana de _Windows PowerShell_ ejecute el comando:
-[source,cli]
-----
-ssh -l <nombre de usuario> <dirección IP del nodo de acceso>
-----
-
-[NOTE,caption=NOTA]
-====
-Opción `-l` (letra ele minúscula)
-====
-
-Otra forma de realizar la conexión es utilizando la notación usuario@maquina:
-[source,cli]
-----
-ssh <nombre usuario>@<dirección IP del nodo de acceso>
-----
-
 [#windows_10_cliente_ssh]
 ==== *Cliente SSH*
 Para instalar (habilitar) el cliente SSH de este sistema, siga los siguientes pasos:
@@ -292,7 +277,10 @@ Are you sure you want to continue connecting (yes/no)? yes
 Warning: Permanently added '148.206.50.61' (RSA) to the list of known hosts.
 ----
 
-Este mensaje es para indicarle que el servidor al que se desea conectar, necesita guardar un identificador en su equipo para poder tener una sesión segura. Escriba la palabra "yes" y presione la tecla "Enter" para continuar:
+Este mensaje es para indicarle que el servidor al que se desea conectar, 
+necesita guardar un identificador en su equipo para poder tener una sesión segura. 
+Escriba la palabra "yes" y presione la tecla "Enter" para continuar:
+
 ----
 Are you sure you want to continue connecting (yes/no)? yes
 Warning: Permanently added '148.206.50.61' (RSA) to the list of known hosts.
@@ -308,7 +296,7 @@ Las políticas establecidas en el clúster para asignación de contraseñas son:
 [square]
 * Debe estar formada por al menos 8 caracteres *(sin espacios)*
 * Debe contener un carácter minúscula *(a-z)*
-* Debe contener un carácter mayuscula *(A-Z)*
+* Debe contener un carácter mayúscula *(A-Z)*
 * Debe contener un carácter numérico *(0-9)*
 * Debe contener un carácter especial *(! " # $ % & ' ( ) * + , - . / @)*
 
@@ -354,7 +342,8 @@ passwd: all authentication tokens updated successfully.
 
 [#nodos_particiones_cluster]
 == Nodos y particiones del clúster
-Los nodos (recursos de cómputo) del clúster están agrupados en particiones. Cada una de estas particiones tiene diferentes características, como el tiempo máximo de uso o el número de CPUs que pueden utilizarse. 
+Los nodos (recursos de cómputo) del clúster están agrupados en particiones. 
+Cada una de estas particiones tiene diferentes características, como el tiempo máximo de uso o el número de CPUs que pueden utilizarse. 
 
 [#consultar_particiones_cluster]
 === Consultar las particiones del clúster
@@ -413,12 +402,12 @@ Para obtener más información de este comando, consulte la página https://slur
 
 [#buscar_particion_disponible]
 === Buscar una partición disponible
-Para buscar una partición disponible en el clúster, utilice la aplicación yoltla_pool del módulo yoltla. 
+Para buscar una partición disponible en el clúster, utilice la aplicación yoltla_pool del módulo 'yoltla/beta'. 
 
-Para cargar el módulo yoltla, utilice el siguiente comando:
+Para cargar el módulo 'yoltla/beta', utilice el siguiente comando:
 [source,cli]
 ----
-module load yoltla/.beta
+module load yoltla/beta
 ----
 
 Posteriormente, para ejecutar la aplicación yoltla_pool, utilice el comando:
@@ -429,7 +418,7 @@ yoltla_pool
 
 A continuación se da un ejemplo de la salida de este comando:
 ----
-[pepe@yoltla0 ~]$ module load yoltla/.beta
+[pepe@yoltla0 ~]$ module load yoltla/beta
 [pepe@yoltla0 ~]$ yoltla_pool 
 Particiones por tipo de nodo:
 ===========================================
@@ -464,7 +453,7 @@ gpu     2                1
 vgpu    0                2
 ----
 
-En la parte superior se muestra una tabla todas las particiones disponibles en el clúster agrupadas por tipo de nodo. Las particiones que se encuentran en la misma columna comparten nodos.
+En la parte superior se muestra una tabla  con todas las particiones disponibles en el clúster agrupadas por tipo de nodo. Las particiones que se encuentran en la misma columna comparten nodos.
 
 En la parte inferior, por tipo de nodo, se muestra una tabla con los trabajos pendientes y los nodos libres. Se puede observar que en algunas filas existen trabajos pendientes y nodos libres al mismo tiempo, existen dos razones principales para esto:
 
@@ -473,7 +462,7 @@ En la parte inferior, por tipo de nodo, se muestra una tabla con los trabajos pe
 
 [NOTE, caption=NOTA]
 ====
-La cuota máxima por grupo es de 2,000,000 de minutos de CPU al mismo tiempo.
+La cuota máxima de trabajos corriendo al mismo tiempo es  2,000,000 minutos de CPU por grupo.
 ====
 
 En este ejemplo, las particiones con nodos tipo TTv1 no tienen ningún trabajo pendiente, y además, hay 4 nodos libres de este tipo, por lo que cualquier trabajo que se envíe, se ejecutará de manera inmediata, tomando en cuenta las restricciones antes mencionadas.
@@ -486,7 +475,10 @@ En este ejemplo, las particiones con nodos tipo TTv1 no tienen ningún trabajo p
 .Diagrama de la configuración y funcionamiento del clúster Yoltla
 image::yoltla/diagrama_yoltla.png[Diagrama de la configuración y funcionamiento del clúster Yoltla]
 
-El acceso a los recursos de cómputo del clúster Yoltla es mediante la creación de scripts. Un script se compone de dos partes: directivas de SLURM y comandos.
+
+Para Utilizar los recursos del cluster Yoltla se debe mandar un script de slurm.
+
+Un script de slurm consta de dos partes: directivas slurm y comandos.
 
 [square]
 * *Directivas.* Establecen las opciones con las que se va a ejecutar el trabajo. 
@@ -547,7 +539,7 @@ Sólo utilice la directiva:
 ----
 --cpus-per-task=#
 ----
-cuando trabaje con programas de memoria compartida.
+cuando trabaje con programas de memoria compartida (openMP).
 ====
 
 Para obtener información más detallada de cada una de estas directivas, consulte la sección xref:anexos#directivas_slurm[Directivas de SLURM].
@@ -1115,8 +1107,8 @@ No Modulefiles Currently Loaded.
 
 [#multiplexor_terminales_tmux]
 == Multiplexor de terminales (tmux)
-tmux es un programa que se ejecuta en una terminal y permite que se ejecuten varios otros programas de terminal dentro de él. Cada programa dentro de tmux obtiene su propia terminal administrada por tmux, a la que se puede acceder desde la terminal única donde se ejecuta tmux, esto se llama multiplexación y tmux es un multiplexor de terminal. 
-
+Tmux es un programa para terminal que permite dividir una consola en múltiples secciones.
+Es útil para realizar muchas tareas al mismo tiempo sin tener que crear mas de una conexión.
 
 [#tmux_cargar_aplicacion]
 === Cargar la aplicación
@@ -1479,7 +1471,7 @@ Para transferir información del equipo local al clúster, utilice el comando `s
 scp -Crp <origen del archivo/directorio> <nombre de usuario>@<dirección IP del nodo de acceso>:<destino del archivo/directorio>
 ----
 
-Otra forma de transferir información al clúster es utilizando el comando `rsync`:
+Otra forma, mas confiable, de transferir información al clúster es utilizando el comando `rsync`:
 [source,cli]
 ----
 rsync -Paz <origen del archivo/directorio> <nombre de usuario>@<dirección IP del nodo de acceso>:<destino del archivo/directorio>
@@ -1518,7 +1510,7 @@ Para respaldar información del clúster en el equipo local, utilice el comando 
 scp -Crp <nombre de usuario>@<dirección IP del nodo de acceso>:<origen del archivo/directorio> <destino del archivo/directorio>
 ----
 
-Otra forma de respaldar información del clúster es utilizando el comando `rsync`:
+Otra forma, más confiable,  de respaldar información del clúster es utilizando el comando `rsync`:
 [source,cli]
 ----
 rsync -Paz <nombre de usuario>@<dirección IP del nodo de acceso>:<origen del archivo/directorio> <destino del archivo/directorio>
@@ -1557,10 +1549,14 @@ El . (punto) al final del comando indica que el directorio _resultados_ se desca
 ====
 ****
 
+[TIP,caption=TIP]
+Con rsync se puede detener la transeferencia de archivos en cualquier momento y reanudarla desde donde se dejó al repetir el comando.
 
 [#transferir_respaldar_windows]
 === Windows
-Para poder transferir información entre su equipo y el clúster, es necesario el software _WinSCP_, que puede encontrar en el siguiente https://winscp.net/eng/index.php[enlace]. Descargue e instale _WinSCP_ (utilice las opciones por defecto).
+Para poder transferir información entre su equipo y el clúster, se puede usar el software _WinSCP_, que puede encontrar en el siguiente https://winscp.net/eng/index.php[enlace]. 
+
+Se puede descargar e instalar _WinSCP_ como cualquier otra aplicación de windows.
 
 Una vez instalado el software, siga los siguientes pasos:
 
@@ -1698,3 +1694,4 @@ salida_787945_3.out                         100%   14     0.2KB/s   00:00
 El . (punto) al final del comando indica que el directorio _resultados_ se descargará en el directorio actual.
 ====
 ****
+

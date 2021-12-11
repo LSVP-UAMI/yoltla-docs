@@ -19,7 +19,7 @@
 |Existen uno o más trabajos de mayor prioridad para esta partición.
 
 |ReqNodeNotAvail
-|Algunos nodos requeridos por el trabajo no están disponibles actualmente. Los nodos pueden estar en uso, caídos o sin responder.
+|Algunos nodos requeridos por el trabajo no están disponibles actualmente. Los nodos pueden estar en uso o sin responder.
 
 |Resources
 |El trabajo está esperando que haya recursos disponibles.

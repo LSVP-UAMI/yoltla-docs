@@ -5,14 +5,11 @@
 
 [#que_es_slurm]
 === ¿Qué es SLURM?
-Es un sistema de programación de trabajos y administración de clústeres de código abierto, tolerante a fallas y altamente escalable para clústeres de Linux grandes y pequeños. 
-
+Es un sistema de codigo abierto  para   manejar recursos dw clusters. Es tolerante a fallas y es  altamente escalable para clústeres de Linux grandes y pequeños.
 
 [#version_slurm]
 === ¿Qué versión de SLURM está instalada en el clúster?
 La versión 17.11.5.
-
-
 
 [#trabajos]
 == Trabajos
