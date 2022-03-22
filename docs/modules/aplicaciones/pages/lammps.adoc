@@ -2,7 +2,7 @@
 
 [#descripcion]
 == Descripción
-Large-scale Atomic/Molecular Massively Parallel Simulator (LAMMPS) es un programa de dinámica molecular que modela conjuntos de partículas en estado líquido, sólido o gaseoso. Puede modelar sistemas atómicos, poliméricos, biológicos, de estado sólido (metales, cerámicas, óxidos), granulares, de grano grueso o macroscópicos utilizando una variedad de potenciales interatómicos (campos de fuerza) y condiciones de contorno. Puede modelar sistemas 2d o 3d con solo unas pocas partículas hasta millones o miles de millones. 
+Large-scale Artomic/Molecular Massively Parallel Simulator (LAMMPS) es un programa de dinámica molecular que modela conjuntos de partículas en estado líquido, sólido o gaseoso. Puede modelar sistemas atómicos, poliméricos, biológicos, de estado sólido (metales, cerámicas, óxidos), granulares, de grano grueso o macroscópicos utilizando una variedad de potenciales interatómicos (campos de fuerza) y condiciones de contorno. Puede modelar sistemas 2d o 3d con solo unas pocas partículas hasta millones o miles de millones. 
 
 LAMMPS fue diseñado para funcionar de manera eficiente en equipos paralelos. Utiliza la interfaz de paso de mensajes (MPI) para la comunicación en paralelo.
 
