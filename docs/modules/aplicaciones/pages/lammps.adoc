@@ -2,7 +2,7 @@
 
 [#descripcion]
 == Descripción
-Large-scale Artomic/Molecular Massively Parallel Simulator (LAMMPS) es un programa de dinámica molecular que modela conjuntos de partículas en estado líquido, sólido o gaseoso. Puede modelar sistemas atómicos, poliméricos, biológicos, de estado sólido (metales, cerámicas, óxidos), granulares, de grano grueso o macroscópicos utilizando una variedad de potenciales interatómicos (campos de fuerza) y condiciones de contorno. Puede modelar sistemas 2d o 3d con solo unas pocas partículas hasta millones o miles de millones. 
+Large-scale Atomic/Molecular Massively Parallel Simulator (LAMMPS) es un programa de simulación molecular que modela conjuntos de partículas en estado líquido, sólido o gaseoso. Puede modelar sistemas atómicos, poliméricos, biológicos, de estado sólido (metales, cerámicas, óxidos), granulares, de grano grueso o macroscópicos utilizando una variedad de potenciales interatómicos (campos de fuerza) y condiciones de contorno. Puede modelar sistemas 2d o 3d con solo unas pocas o hasta millones de partículas. 
 
 LAMMPS fue diseñado para funcionar de manera eficiente en equipos paralelos. Utiliza la interfaz de paso de mensajes (MPI) para la comunicación en paralelo.
 
@@ -79,7 +79,7 @@ Un script de entrada de LAMMPS (archivo de texto) normalmente consta de 4 partes
 . Configuración de la simulación
 . Ejecución de la simulación
 
-Las 2 últimas partes se pueden repetir tantas veces como se desee. Es decir, ejecutar la simulación, cambiar algunos ajustes, ejecutar algunos más, etc. Cada una de las 4 partes se describen ahora con más detalle. Recuerde que la mayoría de los comandos solo deben usarse si se desea utilizar un valor no predeterminado.
+Las 2 últimas partes se pueden repetir tantas veces como se desee. Es decir, ejecutar la simulación, modificar algunos parámetros y continuar con la misma, etc. Cada una de las 4 partes se describen ahora con más detalle. Recuerde que la mayoria de los comandos de LAMMPS ayudan a modelar el sistema que se desea simular.
 
 
 [#inicializacion]
@@ -92,29 +92,28 @@ Establece los parámetros que deben definirse antes de que los átomos se creen 
 |Descripción
 
 |`units`
-|Este comando establece el estilo de las unidades utilizadas para una simulación. Determina las unidades de todas las cantidades  especificadas en el script de entrada y el archivo de datos, así como las  cantidades mostradas pantalla, y el archivo de registro.
-Normalmente, este comando se utiliza al principio de un script de entrada.
+|Este comando establece las unidades en las que se realizará una simulación. Normalmente, se utiliza al principio de un script de entrada.
 
 |`dimension`
-|Establece la dimensiones de la simulación. Por defecto, LAMMPS ejecuta simulaciones en 3D. Para ejecutar una simulación 2d, este comando debe usarse antes de configurar una caja de simulación a través de los comandos `create_box` o `read_data`.
+|Establece las dimensiones en las que se realizará la simulación 2D o 3D. Por defecto, LAMMPS ejecuta simulaciones en 3D. Este comando debe usarse antes de configurar la caja de simulación a través de los comandos `create_box` o `read_data`.
 
 |`newton`
-|Este comando activa o desactiva la tercera ley de Newton para interacciones vinculadas y por pares. Para la mayoría de los problemas, activar la tercera ley de Newton significa un modesto ahorro en cálculo.
+|Este comando activa o desactiva el uso de la tercera ley de Newton para interacciones vinculadas y por pares. Para la mayoría de los problemas, activar la tercera ley de Newton significa un modesto ahorro en cálculo.
 
 |`processors`
-|Especifica cómo se asignan los procesadores.
+|Especifica cómo se asignan los cores del procesador.
 
 |boundary
-|Establece el estilo de los límites para el cuadro de simulación global en cada dimensión. Una sola letra asigna el mismo estilo tanto a la cara inferior como a la superior del cuadro. Dos letras asignan el primer estilo a la cara inferior y el segundo estilo a la cara superior. El tamaño inicial del cuadro de simulación lo establecen los comandos `read_data`, `read_restart` o `create_box`.
+|Establece las condiciones a la frontera que se usaran para la caja de simulación. Una sola letra asigna el mismo estilo tanto a la cara inferior como a la superior de la caja de simulación. Dos letras asignan el primer estilo a la cara inferior y el segundo estilo a la cara superior. El tamaño inicial de la caja de simulación lo establecen los comandos `create_box`, `read_data` o `read_restart`.
 
 |atom_style
-|Define qué estilo de átomos usar en una simulación. Esto determina qué atributos están asociados con los átomos. Este comando debe usarse antes de configurar una simulación mediante un comando `read_data`, `read_restart` o `create_box`.
+|Define los atributos que estaran asociados a cada átomo o conjuntos de atomos. Este comando debe usarse antes de configurar una simulación mediante un comando `create_box`, `read_data` o `read_restart`.
 
 |atom_modify
-|Modifica ciertos atributos de los átomos definidos y almacenados dentro de LAMMPS, extras de lo que especifica el comando `atom_style`.
+|Modifica los atributos de los átomos definidos adicional de lo definido con el comando `atom_style`.
 |===
 
-Si los parámetros de campos de fuerza aparecen en los archivos que se van a leer, estos comandos indican a LAMMPS el tipo de campos de fuerza que se esta utilizando: 
+Los parámetros de campos de fuerza que se quieren usar se pueden definir dentro del script de entrada de LAMMPS: 
 
 [cols="18%,82%", options="header"]
 |===
@@ -122,19 +121,19 @@ Si los parámetros de campos de fuerza aparecen en los archivos que se van a lee
 |Descripción
 
 |`pair_style`
-|Establece las fórmulas que utiliza LAMMPS para calcular interacciones por pares. 
+|Establece el tipo de potencial interatómico por pares que se desea usar. 
 
 |`bond_style`
-|Establece la(s) fórmula(s) que utiliza LAMMPS para calcular las interacciones de enlace entre pares de átomos. En LAMMPS, un enlace difiere de una interacción por pares, que se establece mediante el comando `pair_style`.
+|Establece el tipo de enlace entre dos o más átomos.
 
 |`angle_style`
-|Establece la(s) fórmula(s) que utiliza LAMMPS para calcular las interacciones de los ángulos entre los tripletes de átomos, que permanecen vigentes durante la simulación.
+|Establece los ángulos entre tres átomos.
 
 |`dihedral_style`
-|Establece la(s) fórmula(s) que utiliza LAMMPS para calcular las interacciones diédricas entre los cuatrillizos de átomos, que permanecen vigentes durante la simulación.
+|Establece los ángulos entre cuatro átomos.
 
 |`improper_style`
-|Establece la(s) fórmula(s) que utiliza LAMMPS para calcular interacciones impropias entre cuatrillizos de átomos, que permanecen vigentes durante la simulación.
+|.
 |===
 
 
@@ -142,7 +141,7 @@ Si los parámetros de campos de fuerza aparecen en los archivos que se van a lee
 === 2. Definición del sistema
 Hay 3 formas de definir la celda de simulación y reservar espacio para la información del campo de fuerza y llenarlo con átomos en LAMMPS. 
 	
-. Leerlos  desde un archivo de datos.
+. Leerlos desde un archivo de datos.
 . Un archivo de reinicio mediante los comandos `read_data` o `read_restart`, respectivamente. Estos archivos también pueden contener información de topología molecular. 
 . Crear una celda de simulación y llenarla con átomos en una red (sin topología molecular), usando estos comandos: 
 +
@@ -152,29 +151,29 @@ Hay 3 formas de definir la celda de simulación y reservar espacio para la infor
 |Descripción
 
 |`lattice`
-| -
+|Se defince el tipo de arreglo o celda unitaria que se desea usar. Para simulaciones en 3D: sc, bcc, fcc, hcp y diamond. Para simulaciones en 2D: sq, sq2 y hex. 
 
 |`region`
-|Este comando define una región geométrica del espacio.
+|Este comando define una región geométrica donde estará la caja de simulación.
 
 |`create_box`
-|Este comando crea un cuadro de simulación basado en la región especificada. Por lo tanto, primero se debe usar un comando de región para definir un dominio geométrico.
+|Este comando crea la caja de simulación basado en la región especificada. 
 
 |`create_atoms`
-| Este comando crea átomos (o moléculas) en una red, o un solo átomo (o molécula), o una colección aleatoria de átomos (o moléculas), como una alternativa a la lectura en sus coordenadas explícitamente a través de un comando `read_data` o `read_restart`.
+| Este comando crea los átomos o moléculas dentro de la caja de simulación, es una alternativa a la lectura de un archivo a través de un comando `read_data` o `read_restart`.
 
 |`read_dump`
-|Lee la información del átomo de un archivo "dump" para sobrescribir las coordenadas del átomo actual y, opcionalmente, las velocidades del átomo y los indicadores de imagen y las dimensiones del cuadro de simulación.
+|Lee la información del sistema modelado desde un archivo "dump".
 |===
 
-El conjunto completo de átomos se puede duplicar para hacer una simulación más grande usando el comando `replicate`.
+La caja de simulación se puede duplicar para hacer crecer al sistema modelado usando el comando `replicate`.
 
 
 [#configuracion_simulacion]
 === 3. Configuración de la simulación
-Una vez que se definen los átomos y la topología molecular, se pueden especificar una variedad de configuraciones: coeficientes de campo de fuerza, parámetros de simulación, opciones de salida y más.
+Una vez que se definen las características topologicas o configuracionales del sistema a simular, se pueden especificar coeficientes de campo de fuerza, parámetros de simulación, opciones de salida y más.
 
-Los coeficientes de campo de fuerza son establecidos por estos comandos:
+Los coeficientes de campo de fuerza se definen con los siguientes comandos:
 
 [cols="18%,82%", options="header"]
 |===
@@ -214,16 +213,16 @@ Estos comandos establecen varios parámetros de simulación:
 |Descripción
 
 |`neighbor`
-|Este comando establece parámetros que afectan la construcción de listas de vecinos por pares.
+|Este comando establece la distancia en la que se construirá la lista de vecinos por pares.
 
 |`neigh_modify`
 |Este comando establece parámetros que afectan la construcción y uso de listas de vecinos por pares. Dependiendo de qué interacciones de pares y otros comandos se definan, una simulación puede requerir una o más listas de vecinos.
 
 |`group`
-|Identifica una colección de átomos como perteneciente a un grupo. El ID de grupo se puede usar en otros comandos como `fix`, `compute`, `dump`, o `velocity` para actuar sobre esos átomos juntos.
+|Se pueden definir grupos de atomos que tienen las mismas propiedades. El ID de grupo se puede usar en otros comandos como `fix`, `compute`, `dump`, o `velocity`.
 
 |`timestep`
-|Establece el tamaño del paso de tiempo para simulaciones posteriores de dinámica molecular. Consulte el comando de unidades para conocer las unidades de tiempo asociadas con cada opción de unidades que admite LAMMPS.
+|Establece el tamaño del paso de tiempo para realizar las simulaciones. Consulte el comando de unidades para conocer las unidades de tiempo asociadas con cada opción de unidades que admite LAMMPS.
 
 |`reset_timestep`
 |-
