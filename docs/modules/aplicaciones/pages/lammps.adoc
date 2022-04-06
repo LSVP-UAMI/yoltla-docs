@@ -79,7 +79,7 @@ Un script de entrada de LAMMPS (archivo de texto) normalmente consta de 4 partes
 . Configuración de la simulación
 . Ejecución de la simulación
 
-Las 2 últimas partes se pueden repetir tantas veces como se desee. Es decir, ejecutar la simulación, modificar algunos parámetros y continuar con la misma, etc. Cada una de las 4 partes se describen ahora con más detalle. Recuerde que la mayoria de los comandos de LAMMPS ayudan a modelar el sistema que se desea simular.
+Las 2 últimas partes se pueden repetir tantas veces como se desee. Es decir, ejecutar la simulación, modificar algunos parámetros y continuar con la misma, etc. Cada una de las 4 partes se describen ahora con mayor detalle. (Recuerde que la mayoria de los comandos de LAMMPS ayudan a modelar el sistema que se desea simular.)
 
 
 [#inicializacion]
@@ -92,10 +92,10 @@ Establece los parámetros que deben definirse antes de que los átomos se creen 
 |Descripción
 
 |`units`
-|Este comando establece las unidades en las que se realizará una simulación. Normalmente, se utiliza al principio de un script de entrada.
+|Este comando establece las unidades en las que se realizará una simulación. Normalmente, se definen al principio del script de entrada.
 
 |`dimension`
-|Establece las dimensiones en las que se realizará la simulación 2D o 3D. Por defecto, LAMMPS ejecuta simulaciones en 3D. Este comando debe usarse antes de configurar la caja de simulación a través de los comandos `create_box` o `read_data`.
+|Establece las dimensiones en las que se realizará la simulación 2D o 3D. Por defecto, LAMMPS ejecuta simulaciones en 3D. Este comando debe usarse antes de definir la caja de simulación a través de los comandos `create_box` o `read_data`.
 
 |`newton`
 |Este comando activa o desactiva el uso de la tercera ley de Newton para interacciones vinculadas y por pares. Para la mayoría de los problemas, activar la tercera ley de Newton significa un modesto ahorro en cálculo.
@@ -103,14 +103,14 @@ Establece los parámetros que deben definirse antes de que los átomos se creen 
 |`processors`
 |Especifica cómo se asignan los cores del procesador.
 
-|boundary
-|Establece las condiciones a la frontera que se usaran para la caja de simulación. Una sola letra asigna el mismo estilo tanto a la cara inferior como a la superior de la caja de simulación. Dos letras asignan el primer estilo a la cara inferior y el segundo estilo a la cara superior. El tamaño inicial de la caja de simulación lo establecen los comandos `create_box`, `read_data` o `read_restart`.
+|`boundary`
+|Establece las condiciones a la frontera periódicas que se usaran para la caja de simulación. Una sola letra asigna el mismo estilo tanto a la cara inferior como a la superior de la caja de simulación. Dos letras asignan el primer estilo a la cara inferior y el segundo estilo a la cara superior. El tamaño inicial de la caja de simulación lo establecen los comandos `create_box`, `read_data` o `read_restart`.
 
-|atom_style
+|`atom_style`
 |Define los atributos que estaran asociados a cada átomo o conjuntos de atomos. Este comando debe usarse antes de configurar una simulación mediante un comando `create_box`, `read_data` o `read_restart`.
 
-|atom_modify
-|Modifica los atributos de los átomos definidos adicional de lo definido con el comando `atom_style`.
+|`atom_modify`
+|Modifica los atributos de los átomos que se definieron con el comando `atom_style`.
 |===
 
 Los parámetros de campos de fuerza que se quieren usar se pueden definir dentro del script de entrada de LAMMPS: 
@@ -130,10 +130,10 @@ Los parámetros de campos de fuerza que se quieren usar se pueden definir dentro
 |Establece los ángulos entre tres átomos.
 
 |`dihedral_style`
-|Establece los ángulos entre cuatro átomos.
+|Establece los ángulos diedros entre cuatro átomos.
 
 |`improper_style`
-|.
+|Establece los ángulos impropios entre cuatro átomos.
 |===
 
 
@@ -157,21 +157,20 @@ Hay 3 formas de definir la celda de simulación y reservar espacio para la infor
 |Este comando define una región geométrica donde estará la caja de simulación.
 
 |`create_box`
-|Este comando crea la caja de simulación basado en la región especificada. 
+|Este comando crea la caja de simulación basado en una región geométrica especifica. 
 
 |`create_atoms`
 | Este comando crea los átomos o moléculas dentro de la caja de simulación, es una alternativa a la lectura de un archivo a través de un comando `read_data` o `read_restart`.
 
 |`read_dump`
-|Lee la información del sistema modelado desde un archivo "dump".
+|Lee la información del sistema modelado desde un archivo tipo "dump".
 |===
 
 La caja de simulación se puede duplicar para hacer crecer al sistema modelado usando el comando `replicate`.
 
-
 [#configuracion_simulacion]
 === 3. Configuración de la simulación
-Una vez que se definen las características topologicas o configuracionales del sistema a simular, se pueden especificar coeficientes de campo de fuerza, parámetros de simulación, opciones de salida y más.
+Una vez que se definen las características topologicas o configuración del sistema a simular, se pueden especificar coeficientes de campo de fuerza, opciones de salida y más.
 
 Los coeficientes de campo de fuerza se definen con los siguientes comandos:
 
@@ -184,25 +183,23 @@ Los coeficientes de campo de fuerza se definen con los siguientes comandos:
 |Especifica los coeficientes de campo de fuerza por pares para uno o más pares de tipos de átomos.
 
 |`bond_coeff`
-|Especifica los coeficientes del campo de fuerza de enlace para uno o más tipos de enlace.
+|Especifica los coeficientes del campo de fuerza de enlace para dos o más tipos de átomos.
 
 |`angle_coeff`
-|Especifica los coeficientes del campo de fuerza del ángulo para uno o más tipos de ángulos.
+|Especifica los coeficientes del campo de fuerza del ángulo para dos o más átomos.
 
 |`dihedral_coeff`
-|Especifica los coeficientes del campo de fuerza diedro para uno o más tipos diedros.
+|Especifica los coeficientes del campo de fuerza de los ángulos diedros.
 
 |`improper_coeff`
-|Especifica los coeficientes de campo de fuerza incorrectos para uno o más tipos incorrectos.
+|Especifica los coeficientes de campo de fuerza de los ángulos impropios.
 
 |`kspace_style`
 |Define un solucionador de largo alcance para que LAMMPS utilice cada paso de tiempo para calcular interacciones Coulombic de largo alcance
 
 |`dielectric`
-|Establece la constante dieléctrica para las interacciones de Coulombic (por pares y de largo alcance) en este valor.
+|Establece la constante dieléctrica dentro de la caja de simulación.
 
-|`special_bonds`
-|Establece coeficientes de ponderación para las contribuciones de energía y fuerza por pares entre pares de átomos que también están unidos permanentemente entre sí, ya sea directamente o mediante uno o dos enlaces intermedios.
 |===
 
 Estos comandos establecen varios parámetros de simulación:
@@ -216,25 +213,19 @@ Estos comandos establecen varios parámetros de simulación:
 |Este comando establece la distancia en la que se construirá la lista de vecinos por pares.
 
 |`neigh_modify`
-|Este comando establece parámetros que afectan la construcción y uso de listas de vecinos por pares. Dependiendo de qué interacciones de pares y otros comandos se definan, una simulación puede requerir una o más listas de vecinos.
+|Este comando establece parámetros que modifican la construcción de la lista de vecinos.
 
 |`group`
-|Se pueden definir grupos de atomos que tienen las mismas propiedades. El ID de grupo se puede usar en otros comandos como `fix`, `compute`, `dump`, o `velocity`.
+|Se pueden definir grupos de atomos para asignarles las mismas propiedades. El ID de grupo se puede usar en otros comandos como `fix`, `compute`, `dump`, o `velocity`.
 
 |`timestep`
-|Establece el tamaño del paso de tiempo para realizar las simulaciones. Consulte el comando de unidades para conocer las unidades de tiempo asociadas con cada opción de unidades que admite LAMMPS.
+|Establece el tamaño del paso de tiempo para realizar las simulaciones. Consulte el comando de `units` para conocer las unidades de tiempo asociadas con el sistema que va a simular.
 
 |`reset_timestep`
-|-
+|Reinicia o asigna el paso de tiempo.
 
 |`run_style`
-|-
-
-|`min_style`
-|-
-
-|`min_modify`
-|-
+|Establece el tipo de integrador que se usará. 
 |===
 
 Las correcciones imponen una variedad de condiciones de contorno, integración de tiempo y opciones de diagnóstico. El comando `fix` viene en muchas opciones.
@@ -253,7 +244,7 @@ Se pueden especificar varios cálculos para su ejecución durante una simulació
 |Modifica uno o más parámetros de un cálculo previamente definido.
 
 |`variable`
-|Este comando asigna una o más cadenas a un nombre de variable para su evaluación más adelante en el script de entrada o durante una simulación.
+|Este comando asigna un nombre a una variable para su evaluación durante una simulación.
 |===
 
 Las opciones de salida se establecen mediante los comandos:
@@ -264,13 +255,13 @@ Las opciones de salida se establecen mediante los comandos:
 |Descripción
 
 |`thermo`
-|Calcula e imprime información termodinámica (por ejemplo, temperatura, energía, presión) en intervalos de tiempo que son múltiplos de N y al principio y al final de una simulación. 
+|Imprime en pantalla la información termodinámica (por ejemplo, energía total, temperatura, densidad, presión) en intervalos de tiempo durante la simulación. 
 
 |`dump`
-|-
+|Guarda parametros de la simulación para visualiazarlos con alguna herramienta de visualización.
 
 |`restart`
-|Escribe un archivo de reinicio binario con el estado actual de la simulación cada tantos pasos de tiempo, en uno o en ambos modos, a medida que avanza la ejecución. Un valor de 0 significa que no escribe ningún archivo de reinicio.
+|Escribe un archivo de reinicio binario con el estado actual de la simulación cada ciertos pasos de tiempo.
 |===
 
 
@@ -292,10 +283,10 @@ mpiexec.hydra -bootstrap slurm -np 20 lammps -in lammps.input
 [cols="1,1", options="autowidth"]
 |===
 |`mpiexec.hydra`
-|Se ejecuta LAMMPS en paralelo a través de `mpiexec.hydra`, debe conocer el comando que controla cómo se asignan las tareas MPI, así como las opciones de `mpiexec.hydra` que controlan cómo se asignan las tareas MPI a los núcleos físicos de los nodos de la máquina en la que está ejecutando. Esta configuración puede mejorar el rendimiento. Es recomendable vincular tareas MPI (procesos) a la cantidad de núcleos físicos.
+|Se ejecuta LAMMPS en paralelo a través de `mpiexec.hydra`, debe conocer el comando que controla cómo se asignan las tareas MPI, así como las opciones de los nodos de la máquina en la que está ejecutando. Esta configuración puede mejorar el rendimiento. Es recomendable vincular tareas MPI (procesos) a la cantidad de núcleos físicos.
 
 |`-bootstrap slurm`
-|Opción necesario para el cluster Yoltla para ejecutar en varios Cpu's y Nodos. 
+|Opción necesario para que el cluster Yoltla pueda ejecutar en varios Cpu's y Nodos. 
 		
 |`-np`
 |Opción para escoger la cantidad de procesos a ejecutar.
@@ -314,7 +305,7 @@ mpiexec.hydra -bootstrap slurm -np 20 lmp_mpi-gpu -sf gpu -pk gpu 1 -in lammps.i
 [cols="1,1", options="autowidth"]
 |===
 |mpiexec.hydra
-|Se ejecuta LAMMPS en paralelo a través de `mpiexec.hydra`, debe conocer el comando que controla cómo se asignan las tareas MPI, así como las opciones de `mpiexec.hydra` que controlan cómo se asignan las tareas MPI a los núcleos físicos de los nodos de la máquina en la que está ejecutando. Esta configuración puede mejorar el rendimiento.	Es recomendable vincular tareas MPI (procesos) a la cantidad de núcleos físicos.
+|Se ejecuta LAMMPS en paralelo a través de `mpiexec.hydra`, debe conocer el comando que controla cómo se asignan las tareas MPI, así como las opciones de los nodos de la máquina en la que está ejecutando. Esta configuración puede mejorar el rendimiento. Es recomendable vincular tareas MPI (procesos) a la cantidad de núcleos físicos.
 
 |`-bootstrap slurm`
 |Opción necesario para el cluster Yoltla para ejecutar en varios Cpu's y Nodos.
@@ -329,12 +320,10 @@ mpiexec.hydra -bootstrap slurm -np 20 lmp_mpi-gpu -sf gpu -pk gpu 1 -in lammps.i
 |El comando "-sf gpu", detecta la cantidad de gpu en el equipo disponible.
 
 |`-pk gpu`
-|El comando `-pk` invoca configuraciones específicas del paquete para los distintos paquetes de acelerador disponibles en LAMMPS. El uso del comando `-pk gpu` permite establecer explícitamente el número de GPU  a utilizar y opciones adicionales.
+|El comando `-pk` invoca configuraciones específicas del paquete GPU. El uso del comando `-pk gpu` permite establecer explícitamente el número de GPU a utilizar y opciones adicionales.
 |===
 
 Mas información del comando `pk` https://docs.lammps.org/package.html[aquí].
-
-
 
 [#scripts_ejemplo]
 == Scripts de ejemplo
