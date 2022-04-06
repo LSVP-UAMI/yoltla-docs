@@ -323,7 +323,7 @@ mpiexec.hydra -bootstrap slurm -np 20 lmp_mpi-gpu -sf gpu -pk gpu 1 -in lammps.i
 |El comando `-pk` invoca configuraciones específicas del paquete GPU. El uso del comando `-pk gpu` permite establecer explícitamente el número de GPU a utilizar y opciones adicionales.
 |===
 
-Mas información del comando `pk` https://docs.lammps.org/package.html[aquí].
+Mas información del comando `-pk` https://docs.lammps.org/package.html[aquí].
 
 [#scripts_ejemplo]
 == Scripts de ejemplo
@@ -332,7 +332,6 @@ Puede encontrar scripts de ejemplo de la aplicación LAMMPS en el siguiente dire
 ----
 /LUSTRE/scripts_ejemplo/Lammps
 ----
-
 
 
 [#errores_frecuentes]
