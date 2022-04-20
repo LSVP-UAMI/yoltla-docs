@@ -176,9 +176,19 @@ En el entorno de SLURM una tarea es una copia del programa que se ejecutará en 
 --cpus-per-task=#
 ----
 
-Establece la cantidad de CPUs que utilizará una tarea en cada uno de los nodos asignados. Esta directiva es útil para ejecuciones de programas de memoria compartida “OPENMP” ya que solamente se ejecuta una copia (tarea) del programa y posteriormente se crean hilos necesarios para atender las partes paralelas.
+Establece la cantidad de CPUs que utilizará una tarea en cada uno de los nodos asignados. Esta directiva es útil para ejecuciones de programas de memoria compartida (OpenMP) ya que solamente se ejecuta una copia (tarea) del programa y posteriormente se crean hilos necesarios para atender las partes paralelas.
 
-La cantidad de hilos que se crearán durante la ejecución de un programa de memoria compartida “OPENMP” es controlada en el archivo de entrada de la tarea o por medio de la variable de ambiente OMP_NUM_THREADS (ver sección xref:anexos#ejemplos_scripts[Ejemplos de scripts]).
+La cantidad de hilos que se crearán durante la ejecución de un programa de memoria compartida (OpenMP) es controlada en el archivo de entrada de la tarea o por medio de la variable de ambiente OMP_NUM_THREADS (ver sección xref:anexos#scripts_ejemplo[Scripts de ejemplo]).
+
+
+[#memoria_nodo]
+=== Memoria por nodo
+
+----
+--mem=#
+----
+
+Establece la memoria requerida por nodo. Las unidades predeterminadas son megabytes (MB). Se pueden especificar diferentes unidades usando el sufijo [K|M|G|T]. 
 
 
 [#correo_electronico]

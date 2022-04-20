@@ -476,9 +476,9 @@ En este ejemplo, las particiones con nodos tipo TTv1 no tienen ningún trabajo p
 image::yoltla/diagrama_yoltla.png[Diagrama de la configuración y funcionamiento del clúster Yoltla]
 
 
-Para Utilizar los recursos del cluster Yoltla se debe mandar un script de slurm.
+Para utilizar los recursos del cluster Yoltla se debe mandar un script de SLURM.
 
-Un script de slurm consta de dos partes: directivas slurm y comandos.
+Un script de SLURM consta de dos partes: directivas SLURM y comandos.
 
 [square]
 * *Directivas.* Establecen las opciones con las que se va a ejecutar el trabajo. 
@@ -524,6 +524,10 @@ Las principales directivas para SLURM son:
 |Número de CPUs por tarea.
 |Obligatorio
 
+|--mem=# 
+|Memoria por nodo.
+|Opcional
+
 |--mail-user=email
 |Correo electrónico del usuario.
 |Opcional
@@ -539,7 +543,7 @@ Sólo utilice la directiva:
 ----
 --cpus-per-task=#
 ----
-cuando trabaje con programas de memoria compartida (openMP).
+cuando trabaje con programas de memoria compartida (OpenMP).
 ====
 
 Para obtener información más detallada de cada una de estas directivas, consulte la sección xref:anexos#directivas_slurm[Directivas de SLURM].
@@ -554,9 +558,9 @@ A continuación se presenta un ejemplo de un script:
 #SBATCH --output=salida_%j.out
 #SBATCH --error=error_%j.err
 #SBATCH --partition=q1h-20p
-#SBATCH --time=0-00:00:05
+#SBATCH --time=0-00:00:10
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=10
+#SBATCH --ntasks-per-node=20
 #SBATCH --mail-user=pepe@host.com
 #SBATCH --mail-type=all
 
@@ -709,6 +713,106 @@ Para obtener más información de este comando, consulte la página https://slur
 
 
 
+[#monitoreo_trabajos]
+== Monitoreo de trabajos
+Puede monitorear un trabajo conectándose al nodo en el que se está ejecutando y utilizando la aplicación htop.
+
+[#consultar_nodo_ejecución]
+=== Consultar el nodo de ejecución
+Para consultar en que nodo se está ejecutando un trabajo utilice el comando `squeue` (ver sección xref:tutoriales#consultar_trabajo[Consultar un trabajo]) o el comando `sacct` (ver sección xref:tutoriales#historial_trabajos[Historial de trabajos]).
+
+Por ejemplo, para consultar en que nodo se está ejecutando el trabajo con ID 817543, ejecute el comando:
+----
+[pepe@yoltla0 ~]$  squeue -j 817543
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+            817543   q1h-20p script_g     pepe  R      10:15      1 nc87
+----
+En este caso, el trabajo con ID 817543 se está ejecutando en el nodo nc87.
+
+[NOTE,caption=NOTA]
+====
+Si un trabajo utiliza MPI, es posible que se esté ejecutando en varios nodos.
+====
+
+
+[#conectarse_nodo]
+=== Conectarse a un nodo
+Para conectarse a un nodo, utilice el comando `ssh` seguido del nombre del nodo:
+[source,cli]
+----
+ssh <nombre del nodo>
+----
+
+[NOTE,caption=NOTA]
+====
+Solo podrá conectarse a un nodo, si en él se esta ejecutando alguno de sus trabajos. Una vez que el trabajo haya concluido la conexión terminará.
+====
+
+Por ejemplo, para conectarse al nodo nc87, ejecute el comando:
+----
+[pepe@yoltla0 ~]$ ssh nc87
+Warning: Permanently added 'nc87,10.10.200.87' (RSA) to the list of known hosts.
+[pepe@nc87 ~]$ 
+----
+
+[NOTE,caption=NOTA]
+====
+Es posible que en algunos casos se le solicite su contraseña para tener acceso al nodo.
+====
+
+
+[#monitorear_trabajo]
+=== Monitorear un trabajo
+Para monitorear un trabajo, utilice el comando `htop` seguido de la opción `-u` y su nombre de usuario:
+[source,cli]
+----
+htop -u <nombre de usuario>
+----
+
+[NOTE,caption=NOTA]
+====
+Recuerde que debe estar conectado al nodo en que se está ejecutando su trabajo.
+====
+
+Por ejemplo, para el usuario pepe, el comando correspondiente es el siguiente:
+----
+[pepe@nc87 ~]$ htop -u pepe
+----
+
+Después de ejecutar este comando, el aspecto de la terminal cambiará al que se muestra a continuación:
+
+image::htop/interfaz.png["Interfaz", link="_images/htop/interfaz.png"]
+
+Desde esta interfaz puede monitorear el uso de CPU, el uso de memoria RAM y el tiempo que se ha estado ejecutando su trabajo. Presione la tecla `q` para salir. 
+
+Para obtener más información del uso de la aplicación htop consulte la sección xref:tutoriales#htop[htop].
+
+[NOTE,caption=NOTA]
+====
+Si el comportamiento de su trabajo no es el esperado, puede cancelar el trabajo utilizando el comando `scancel` (ver sección xref:tutoriales#cancelar_trabajo[Cancelar un trabajo]).
+
+Si necesita soporte adicional, envíe un correo a soporte.lsvp@gmail.com.
+====
+
+
+[#desconectarse_nodo]
+=== Desconectarse de un nodo
+Para desconectarse de un nodo, ejecute el comando:
+[source,cli]
+----
+exit
+----
+
+En nuestro ejemplo, al desconectarnos del nodo nc87, obtenemos la siguiente salida:
+----
+[pepe@nc87 ~]$ exit
+logout
+Connection to nc87 closed.
+[pepe@yoltla0 ~]$
+----
+
+
+
 [#historial_trabajos]
 == Historial de trabajos
 
@@ -844,102 +948,59 @@ Para obtener más información de este comando, consulte la página https://slur
 
 
 
-[#monitoreo_trabajos]
-== Monitoreo de trabajos
-Puede monitorear un trabajo conectándose al nodo en el que se está ejecutando y utilizando la aplicación htop.
+[#eficiencia_trabajos]
+== Eficiencia de trabajos
 
-[#consultar_nodo_ejecución]
-=== Consultar el nodo de ejecución
-Para consultar en que nodo se está ejecutando un trabajo utilice el comando `squeue` (ver sección xref:tutoriales#consultar_trabajo[Consultar un trabajo]) o el comando `sacct` (ver sección xref:tutoriales#historial_trabajos[Historial de trabajos]).
-
-Por ejemplo, para consultar en que nodo se está ejecutando el trabajo con ID 817543, ejecute el comando:
-----
-[pepe@yoltla0 ~]$  squeue -j 817543
-             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
-            817543   q1h-20p script_g     pepe  R      10:15      1 nc87
-----
-En este caso, el trabajo con ID 817543 se está ejecutando en el nodo nc87.
-
-[NOTE,caption=NOTA]
-====
-Si un trabajo utiliza MPI, es posible que se esté ejecutando en varios nodos.
-====
-
-
-[#conectarse_nodo]
-=== Conectarse a un nodo
-Para conectarse a un nodo, utilice el comando `ssh` seguido del nombre del nodo:
+[#consultar_informe_eficiencia]
+=== Consultar el informe de eficiencia
+Puede consultar el informe de eficiencia de un trabajo con el comando `seff` seguido del ID del trabajo:
 [source,cli]
 ----
-ssh <nombre del nodo>
+seff <ID del trabajo>
 ----
 
 [NOTE,caption=NOTA]
 ====
-Solo podrá conectarse a un nodo, si en él se esta ejecutando alguno de sus trabajos. Una vez que el trabajo haya concluido la conexión terminará.
+No se recomienda el uso del comando `seff` en trabajos fallidos o en ejecución, ya que puede reportar información errónea.
 ====
 
-Por ejemplo, para conectarse al nodo nc87, ejecute el comando:
+Por ejemplo, para consultar el informe de eficiencia del trabajo con ID 888872, ejecute el comando:
 ----
-[pepe@yoltla0 ~]$ ssh nc87
-Warning: Permanently added 'nc87,10.10.200.87' (RSA) to the list of known hosts.
-[pepe@nc87 ~]$ 
+[pepe@yoltla0 ~]$ seff 888872
+Job ID: 888872
+Cluster: yoltla
+User/Group: c.553/edra
+State: COMPLETED (exit code 0)
+Nodes: 1
+Cores per node: 20
+CPU Utilized: 05:53:51
+CPU Efficiency: 99.96% of 05:54:00 core-walltime
+Job Wall-clock time: 00:17:42
+Memory Utilized: 53.33 GB
+Memory Efficiency: 88.89% of 60.00 GB
 ----
 
-[NOTE,caption=NOTA]
+A continuación se da una breve explicación de algunos de los campos de la salida anterior:
+
+* El tiempo de CPU (_core-walltime_) es la cantidad de tiempo que la CPU dedicó al trabajo. Por ejemplo, si un trabajo se ejecutó durante una 1 hora en 20 CPUs, entonces habrá usado 20 horas de CPU. 
+* La eficiencia de CPU (_CPU Efficiency_) es la relación del tiempo de CPU utilizado (_CPU Utilized_)  y el tiempo de CPU. 
+* La eficiencia de memoria (_Memory Efficiency_) es la relación de la cantidad de memoria utilizada (_Memory Utilized_) y la cantidad de memoria solicitada.
+
+En este este ejemplo, el trabajo se ejecutó durante 17 minutos y 42 segundos en 20 CPUs, por lo que su tiempo de CPU es de 5 horas con 54 minutos, pero el tiempo de CPU utilizado es de 5 horas con 53 minutos y 51 segundos, por lo  tanto, la eficiencia de CPU es del 99.96%. La cantidad de memoria solicitada fue de 60.00 GB, pero la cantidad de memoria utilizada fue de 53.33 GB, por lo tanto, la eficiencia de memoria es del 88.89%. 
+
+[WARNING, caption=IMPORTANTE]
 ====
-Es posible que en algunos casos se le solicite su contraseña para tener acceso al nodo.
-====
-
-
-[#monitorear_trabajo]
-=== Monitorear un trabajo
-Para monitorear un trabajo, utilice el comando `htop` seguido de la opción `-u` y su nombre de usuario:
-[source,cli]
+Para obtener el informe de la eficiencia de la memoria es necesario utilizar la directiva:
 ----
-htop -u <nombre de usuario>
+--mem=# 
 ----
 
-[NOTE,caption=NOTA]
-====
-Recuerde que debe estar conectado al nodo en que se está ejecutando su trabajo.
-====
-
-Por ejemplo, para el usuario pepe, el comando correspondiente es el siguiente:
+en su script de SLURM, de lo contrario el valor reportado será el siguiente:
 ----
-[pepe@nc87 ~]$ htop -u pepe
+Memory Efficiency: 0.00% of 0.00 MB (0.00 MB/node)
 ----
-
-Después de ejecutar este comando, el aspecto de la terminal cambiará al que se muestra a continuación:
-
-image::htop/interfaz.png["Interfaz", link="_images/htop/interfaz.png"]
-
-Desde esta interfaz puede monitorear el uso de CPU, el uso de memoria RAM y el tiempo que se ha estado ejecutando su trabajo. Presione la tecla `q` para salir. 
-
-Para obtener más información del uso de la aplicación htop consulte la sección xref:tutoriales#htop[htop].
-
-[NOTE,caption=NOTA]
-====
-Si el comportamiento de su trabajo no es el esperado, puede cancelar el trabajo utilizando el comando `scancel` (ver sección xref:tutoriales#cancelar_trabajo[Cancelar un trabajo]).
-
-Si necesita soporte adicional, envíe un correo a soporte.lsvp@gmail.com.
 ====
 
-[#desconectarse_nodo]
-=== Desconectarse de un nodo
-Para desconectarse de un nodo, ejecute el comando:
-[source,cli]
-----
-exit
-----
-
-En nuestro ejemplo, al desconectarnos del nodo nc87, obtenemos la siguiente salida:
-----
-[pepe@nc87 ~]$ exit
-logout
-Connection to nc87 closed.
-[pepe@yoltla0 ~]$
-----
 
 
 [#aplicaciones_cluster]
@@ -1694,4 +1755,3 @@ salida_787945_3.out                         100%   14     0.2KB/s   00:00
 El . (punto) al final del comando indica que el directorio _resultados_ se descargará en el directorio actual.
 ====
 ****
-
